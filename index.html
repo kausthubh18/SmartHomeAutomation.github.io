@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Your existing styles */
         body {
             font-family: 'Roboto', sans-serif;
             background: linear-gradient(135deg, #f0f4f8, #d9e7ff);
@@ -81,7 +80,7 @@
             transform: translateY(-2px);
         }
         canvas {
-            width: 100% !important; /* Make the canvas responsive */
+            width: 100% !important;
             height: 300px !important;
         }
         .visualization-container {
@@ -103,42 +102,6 @@
             margin-bottom: 15px;
             color: #4A90E2;
             text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
-        }
-        /* Smart Device Control Widget */
-        .device-control-widget {
-            background: #e7f3ff;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 20px;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-        }
-        .device-control-widget:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-        }
-        .device-button {
-            margin: 10px;
-            padding: 10px 20px;
-            font-size: 1em;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .button-light {
-            background: #f39c12; /* Orange for Light */
-        }
-        .button-fan {
-            background: #27ae60; /* Green for Fan */
-        }
-        .button-light:hover {
-            background: #e67e22;
-        }
-        .button-fan:hover {
-            background: #219150;
         }
     </style>
 </head>
