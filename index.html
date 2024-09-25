@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Automation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8, #d9e7ff);
+            margin: 0;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #4A90E2;
+            text-align: center;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #4A90E2;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s, color 0.3s;
+        }
+        nav a:hover {
+            background: rgba(74, 144, 226, 0.2);
+            color: #0056b3;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin: 15px;
+            padding: 20px;
+            text-align: center;
+            width: 150px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        .icon {
+            font-size: 50px;
+            color: #4A90E2;
+        }
+        .status {
+            font-size: 1.5em;
+            margin-top: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+        .data-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            transition: transform 0.3s;
+        }
+        .data-section:hover {
+            transform: translateY(-2px);
+        }
+        canvas {
+            width: 100% !important; /* Make the canvas responsive */
+            height: 300px !important;
+        }
+        .visualization-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .graph-card {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .graph-header {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #4A90E2;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+        }
+        /* Smart Device Control Widget */
+        .device-control-widget {
+            background: #e7f3ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .device-control-widget:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        .device-button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .button-light {
+            background: #f39c12; /* Orange for Light */
+        }
+        .button-fan {
+            background: #27ae60; /* Green for Fan */
+        }
+        .button-light:hover {
+            background: #e67e22;
+        }
+        .button-fan:hover {
+            background: #219150;
+        }
+    </style>
+</head>
+<body>
+    <h1>Smart Home Automation</h1>
+
+    <nav>
+        <a href="#home" onclick="showSection('home')">Home</a>
+        <a href="#current-readings" onclick="showSection('current-readings')">Current Readings</a>
+        <a href="#device-control" onclick="showSection('device-control')">Device Control</a>
+        <a href="#notifications" onclick="showSection('notifications')">Notifications</a>
+        <a href="#data-visualization" onclick="showSection('data-visualization')">Data Visualization</a>
+        <a href="#connected-sensors" onclick="showSection('connected-sensors')">Connected Sensors</a>
+    </nav>
+
+    <div id="home" class="container">
+        <div class="card">
+            <div class="icon">🌡️</div>
+            <h3>Temperature</h3>
+            <p id="temperature" class="status">27.87 °C</p>
+        </div>
+        <div class="card">
+            <div class="icon">💧</div>
+            <h3>Humidity</h3>
+            <p id="humidity" class="status">90.05%</p>
+        </div>
+        <div class="card">
+            <div class="icon">⚡</div>
+            <h3>Current</h3>
+            <p id="current" class="status">3.18 A</p>
+        </div>
+        <div class="card">
+            <div class="icon">🔮</div>
+            <h3>Prediction</h3>
+            <p id="prediction" class="status">All systems operational</p>
+        </div>
+    </div>
+
+    <div id="device-control" class="hidden data-section">
+        <h2>Device Control</h2>
+        <div class="device-control-widget">
+            <h2>Smart Device Control</h2>
+            <button class="device-button button-light" onclick="toggleDevice('light')">Toggle Light</button>
+            <button class="device-button button-fan" onclick="toggleDevice('fan')">Toggle Fan</button>
+            <input type="range" min="0" max="100" onchange="setFanSpeed(this.value)" />
+            <p>Fan Speed: <span id="fanSpeed">--</span>%</p>
+            <div>
+                <h3>ESP32 CAM Control</h3>
+                <button class="device-button button-light" onclick="viewCamera()">View Camera</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="current-readings" class="hidden data-section">
+        <h2>Current Readings</h2>
+        <p>Temperature: <span id="temperatureReading">27.87</span> °C</p>
+        <p>Humidity: <span id="humidityReading">90.05</span> %</p>
+        <p>Current: <span id="currentReading">3.18</span> A</p>
+    </div>
+
+    <div id="notifications" class="hidden data-section">
+        <h2>Notifications</h2>
+        <ul id="notificationList"></ul>
+    </div>
+
+    <div id="data-visualization" class="hidden data-section">
+        <div class="visualization-container">
+            <div class="graph-card">
+                <div class="graph-header">Real-time Sensor Data</div>
+                <canvas id="dataChart"></canvas>
+            </div>
+            <div class="graph-card">
+                <div class="graph-header">Trends Over Time</div>
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div id="connected-sensors" class="hidden data-section">
+        <h2>Connected Sensors</h2>
+        <div id="sensorsContainer"></div>
+    </div>
+
+    <script>
+        // Simulated connected sensors
+        const connectedSensors = ['Temperature Sensor', 'Humidity Sensor', 'Current Sensor'];
+
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.data-section');
+            sections.forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+
+            if (sectionId === 'connected-sensors') {
+                displayConnectedSensors();
+            }
+        }
+
+        function displayConnectedSensors() {
+            const sensorsContainer = document.getElementById('sensorsContainer');
+            sensorsContainer.innerHTML = '';
+            connectedSensors.forEach(sensor => {
+                const sensorElement = document.createElement('div');
+                sensorElement.classList.add('card');
+                sensorElement.innerHTML = `<h3>${sensor}</h3><p>Status: Connected</p>`;
+                sensorsContainer.appendChild(sensorElement);
+            });
+        }
+
+        function toggleDevice(device) {
+            const deviceStatus = device === 'light' ? document.getElementById('lightStatus') : document.getElementById('fanStatus');
+            deviceStatus.innerText = deviceStatus.innerText === 'On' ? 'Off' : 'On';
+            addNotification(`${device.charAt(0).toUpperCase() + device.slice(1)} turned ${deviceStatus.innerText}`);
+        }
+
+        function setFanSpeed(value) {
+            document.getElementById('fanSpeed').innerText = value;
+        }
+
+        function viewCamera() {
+            addNotification('Viewing ESP32 CAM');
+            // Here you would add the code to actually show the camera stream
+        }
+
+        function addNotification(message) {
+            const notificationList = document.getElementById('notificationList');
+            const notificationItem = document.createElement('li');
+            notificationItem.innerText = message;
+            notificationList.appendChild(notificationItem);
+        }
+
+        // Chart.js setup for data visualization
+        const ctxData = document.getElementById('dataChart').getContext('2d');
+        const dataChart = new Chart(ctxData, {
+            type: 'line',
+            data: {
+                labels: ['0s', '1s', '2s', '3s', '4s', '5s'],
+                datasets: [{
+                    label: 'Temperature',
+                    data: [20, 22, 21, 23, 24, 25],
+                    borderColor: 'rgba(74, 144, 226, 1)',
+                    borderWidth: 2,
+                    fill: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const ctxTrend = document.getElementById('trendChart').getContext('2d');
+        const trendChart = new Chart(ctxTrend, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                datasets: [{
+                    label: 'Weekly Temperature',
+                    data: [21, 23, 22, 24, 25],
+                    backgroundColor: 'rgba(74, 144, 226, 0.6)',
+                    borderColor: 'rgba(74, 144, 226, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
