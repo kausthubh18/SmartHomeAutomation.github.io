@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* Your existing styles */
         body {
             font-family: 'Roboto', sans-serif;
             background: linear-gradient(135deg, #f0f4f8, #d9e7ff);
@@ -218,107 +219,121 @@
 
     <div id="connected-sensors" class="hidden data-section">
         <h2>Connected Sensors</h2>
-        <div id="sensorsContainer"></div>
+        <ul id="sensorList"></ul>
     </div>
 
     <script>
-        // Simulated connected sensors
-        const connectedSensors = ['Temperature Sensor', 'Humidity Sensor', 'Current Sensor'];
-
+        // Function to show/hide sections
         function showSection(sectionId) {
             const sections = document.querySelectorAll('.data-section');
-            sections.forEach(section => {
-                section.classList.add('hidden');
-            });
+            sections.forEach(section => section.classList.add('hidden'));
             document.getElementById(sectionId).classList.remove('hidden');
-
-            if (sectionId === 'connected-sensors') {
-                displayConnectedSensors();
-            }
         }
 
-        function displayConnectedSensors() {
-            const sensorsContainer = document.getElementById('sensorsContainer');
-            sensorsContainer.innerHTML = '';
-            connectedSensors.forEach(sensor => {
-                const sensorElement = document.createElement('div');
-                sensorElement.classList.add('card');
-                sensorElement.innerHTML = `<h3>${sensor}</h3><p>Status: Connected</p>`;
-                sensorsContainer.appendChild(sensorElement);
-            });
-        }
-
+        // Function to toggle device state (simulated)
         function toggleDevice(device) {
-            const deviceStatus = device === 'light' ? document.getElementById('lightStatus') : document.getElementById('fanStatus');
-            deviceStatus.innerText = deviceStatus.innerText === 'On' ? 'Off' : 'On';
-            addNotification(`${device.charAt(0).toUpperCase() + device.slice(1)} turned ${deviceStatus.innerText}`);
+            const status = device === 'light' ? 'Light toggled!' : 'Fan toggled!';
+            addNotification(status);
         }
 
+        // Function to set fan speed (simulated)
         function setFanSpeed(value) {
             document.getElementById('fanSpeed').innerText = value;
         }
 
+        // Function to view camera (simulated)
         function viewCamera() {
-            addNotification('Viewing ESP32 CAM');
-            // Here you would add the code to actually show the camera stream
+            const status = 'ESP32 CAM activated!';
+            addNotification(status);
         }
 
+        // Function to add notification
         function addNotification(message) {
             const notificationList = document.getElementById('notificationList');
-            const notificationItem = document.createElement('li');
-            notificationItem.innerText = message;
-            notificationList.appendChild(notificationItem);
+            const li = document.createElement('li');
+            li.textContent = message;
+            notificationList.appendChild(li);
         }
 
-        // Chart.js setup for data visualization
-        const ctxData = document.getElementById('dataChart').getContext('2d');
-        const dataChart = new Chart(ctxData, {
+        // Function to update sensor values periodically
+        function updateSensorValues() {
+            // Generate random values for temperature, humidity, and current
+            const temperature = (Math.random() * 10 + 25).toFixed(2); // 25°C to 35°C
+            const humidity = (Math.random() * 20 + 80).toFixed(2); // 80% to 100%
+            const current = (Math.random() * 2 + 2).toFixed(2); // 2A to 4A
+
+            document.getElementById('temperature').innerText = `${temperature} °C`;
+            document.getElementById('humidity').innerText = `${humidity}%`;
+            document.getElementById('current').innerText = `${current} A`;
+            document.getElementById('temperatureReading').innerText = temperature;
+            document.getElementById('humidityReading').innerText = humidity;
+            document.getElementById('currentReading').innerText = current;
+
+            updateChart(temperature, humidity, current);
+        }
+
+        // Initialize charts
+        const ctx = document.getElementById('dataChart').getContext('2d');
+        const dataChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['0s', '1s', '2s', '3s', '4s', '5s'],
-                datasets: [{
-                    label: 'Temperature',
-                    data: [20, 22, 21, 23, 24, 25],
-                    borderColor: 'rgba(74, 144, 226, 1)',
-                    borderWidth: 2,
-                    fill: false,
-                }]
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Temperature (°C)',
+                        data: [],
+                        borderColor: 'rgba(74, 144, 226, 1)',
+                        fill: false
+                    },
+                    {
+                        label: 'Humidity (%)',
+                        data: [],
+                        borderColor: 'rgba(39, 174, 96, 1)',
+                        fill: false
+                    },
+                    {
+                        label: 'Current (A)',
+                        data: [],
+                        borderColor: 'rgba(231, 76, 60, 1)',
+                        fill: false
+                    }
+                ]
             },
             options: {
-                responsive: true,
                 scales: {
-                    x: {
-                        beginAtZero: true
-                    },
+                    x: { type: 'linear', position: 'bottom' },
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Sensor Values'
+                        }
                     }
                 }
             }
         });
 
-        const ctxTrend = document.getElementById('trendChart').getContext('2d');
-        const trendChart = new Chart(ctxTrend, {
-            type: 'bar',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-                datasets: [{
-                    label: 'Weekly Temperature',
-                    data: [21, 23, 22, 24, 25],
-                    backgroundColor: 'rgba(74, 144, 226, 0.6)',
-                    borderColor: 'rgba(74, 144, 226, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+        // Update chart data
+        function updateChart(temperature, humidity, current) {
+            const now = new Date().toLocaleTimeString();
+
+            if (dataChart.data.labels.length >= 10) {
+                dataChart.data.labels.shift();
+                dataChart.data.datasets.forEach((dataset) => {
+                    dataset.data.shift();
+                });
             }
-        });
+
+            dataChart.data.labels.push(now);
+            dataChart.data.datasets[0].data.push(temperature);
+            dataChart.data.datasets[1].data.push(humidity);
+            dataChart.data.datasets[2].data.push(current);
+
+            dataChart.update();
+        }
+
+        // Start updating sensor values every 5 seconds
+        setInterval(updateSensorValues, 5000);
     </script>
 </body>
 </html>
